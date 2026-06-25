@@ -1,4 +1,5 @@
 // app/src/ClaudeStatusBar/Render/EmbeddedRenderer.cs
+using System.Windows.Forms;
 using System.Windows.Interop;
 using ClaudeStatusBar.Core;
 using ClaudeStatusBar.Interop;
@@ -31,6 +32,9 @@ public sealed class EmbeddedRenderer : IStatusRenderer
         var prevCtx = SynchronizationContext.Current;
         _widget = new Widget();
         SynchronizationContext.SetSynchronizationContext(prevCtx);
+
+        // Subscribe once here (not in Embed) so a retried Embed() doesn't fire EmbedLost N times.
+        _embedder.Detached += (_, _) => EmbedLost?.Invoke(this, EventArgs.Empty);
     }
 
     public bool Embed()
@@ -43,8 +47,8 @@ public sealed class EmbeddedRenderer : IStatusRenderer
         var hwnd = _widget.Handle;
 
         var src = HwndSource.FromHwnd(hwnd);
-        src?.AddHook(WndProc);
-        _embedder.Detached += (_, _) => EmbedLost?.Invoke(this, EventArgs.Empty);
+        if (src is null) return false;   // can't hook TaskbarCreated -> report embed failure for fallback
+        src.AddHook(WndProc);
 
         return _embedder.TryEmbed(hwnd, WidthPx);
     }
@@ -65,8 +69,10 @@ public sealed class EmbeddedRenderer : IStatusRenderer
 
     public void Dispose()
     {
-        _embedder.Dispose();
+        // Close the WPF widget first (destroys the HWND, killing the message source),
+        // then dispose the embedder, to avoid a WndProc->ReEmbed-on-disposed-embedder race.
         if (_widget.Dispatcher.CheckAccess()) _widget.Close();
         else _widget.Dispatcher.Invoke(_widget.Close);
+        _embedder.Dispose();
     }
 }
