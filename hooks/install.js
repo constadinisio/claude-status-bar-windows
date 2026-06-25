@@ -31,7 +31,13 @@ const life   = (evt) => mkHook(lifecycleDest, evt);
 
 let settings = {};
 if (fs.existsSync(settingsPath)) {
-  settings = JSON.parse(fs.readFileSync(settingsPath, "utf8"));
+  const raw = fs.readFileSync(settingsPath, "utf8").replace(/^﻿/, ""); // strip BOM
+  try {
+    settings = JSON.parse(raw);
+  } catch (e) {
+    console.error("settings.json is not valid JSON:", e.message);
+    process.exit(1);
+  }
   const bak = settingsPath + ".bak-statusbar";
   if (!fs.existsSync(bak)) fs.copyFileSync(settingsPath, bak);
 }
@@ -71,7 +77,10 @@ addUnmatched("Stop",             cmd("stop"));
 addUnmatched("SessionStart", life("start"));
 addUnmatched("SessionEnd",   life("end"));
 
-fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + "\n");
+// Atomic write: write temp then rename so a crash mid-write can't corrupt settings.
+const tmp = settingsPath + ".tmp";
+fs.writeFileSync(tmp, JSON.stringify(settings, null, 2) + "\n");
+fs.renameSync(tmp, settingsPath);
 console.log("Installed status-bar hooks into", settingsPath);
 console.log("Scripts:", updateDest, "and", lifecycleDest);
 console.log("Backup (first run only):", settingsPath + ".bak-statusbar");
