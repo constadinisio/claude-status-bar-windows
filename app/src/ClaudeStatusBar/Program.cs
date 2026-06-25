@@ -14,8 +14,7 @@ internal static class Program
         if (!createdNew) return;
 
         ApplicationConfiguration.Initialize();
-        // Por ahora siempre TrayRenderer; en Phase 4 se elige embedded con fallback.
-        Application.Run(new TrayApplicationContext(() => new TrayRenderer()));
+        Application.Run(new TrayApplicationContext(RendererSelector.Create));
         GC.KeepAlive(mutex);
     }
 }
