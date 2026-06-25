@@ -13,6 +13,7 @@ public sealed class TrayApplicationContext : ApplicationContext
     private readonly System.Threading.Timer _sessionTimer;
     private AppState _lastState = AppState.Idle;
     private volatile bool _seenSession;
+    private volatile bool _exitPosted;
 
     public TrayApplicationContext(Func<IStatusRenderer> rendererFactory)
     {
@@ -69,8 +70,11 @@ public sealed class TrayApplicationContext : ApplicationContext
                 _seenSession = true;
                 return;
             }
-            if (_seenSession)
+            if (_seenSession && !_exitPosted)
+            {
+                _exitPosted = true;
                 _ui.Post(_ => ExitThread(), null);
+            }
         }
         catch { /* ignore transient filesystem errors */ }
     }
