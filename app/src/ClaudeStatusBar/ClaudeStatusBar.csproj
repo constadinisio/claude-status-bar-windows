@@ -10,4 +10,7 @@
     <RootNamespace>ClaudeStatusBar</RootNamespace>
     <AssemblyName>ClaudeStatusBar</AssemblyName>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Velopack" Version="1.2.0" />
+  </ItemGroup>
 </Project>
