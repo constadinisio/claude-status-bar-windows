@@ -6,24 +6,25 @@ namespace ClaudeStatusBar.Render;
 public sealed class TrayRenderer : IStatusRenderer
 {
     private readonly NotifyIcon _icon;
+    private readonly ContextMenuStrip _menu;
     private readonly System.Windows.Forms.Timer _anim = new() { Interval = 140 };
     private Icon[] _frames = Array.Empty<Icon>();
     private int _frameIdx;
-    private int _iconSize = 16;
+    private bool _disposed;
 
     public event EventHandler? ExitRequested;
 
     public TrayRenderer()
     {
-        var menu = new ContextMenuStrip();
-        menu.Items.Add("Salir", null, (_, _) => ExitRequested?.Invoke(this, EventArgs.Empty));
+        _menu = new ContextMenuStrip();
+        _menu.Items.Add("Salir", null, (_, _) => ExitRequested?.Invoke(this, EventArgs.Empty));
 
         _icon = new NotifyIcon
         {
-            Visible = true,
-            Text = "Claude Code: idle",
-            ContextMenuStrip = menu,
             Icon = SystemIcons.Application, // reemplazado en el primer Render
+            Text = "Claude Code: idle",
+            ContextMenuStrip = _menu,
+            Visible = true, // último: NIM_ADD usa Icon/Text ya asignados (evita parpadeo en blanco)
         };
         _anim.Tick += (_, _) =>
         {
@@ -38,13 +39,14 @@ public sealed class TrayRenderer : IStatusRenderer
         _anim.Stop();
         DisposeFrames();
 
-        _iconSize = DpiIconSize();
-        _frames = IconFactory.FramesFor(state.State, _iconSize);
+        int iconSize = DpiIconSize();
+        _frames = IconFactory.FramesFor(state.State, iconSize);
         _frameIdx = 0;
+        if (_frames.Length == 0) return; // defensa: IconFactory siempre devuelve ≥1 frame
         _icon.Icon = _frames[0];
 
         var tip = StatusViewModel.Tooltip(state);
-        _icon.Text = tip.Length > 63 ? tip[..63] : tip;  // NotifyIcon.Text máx 64 chars
+        _icon.Text = tip.Length > 63 ? tip[..63] : tip;  // NotifyIcon.Text máx 63 chars
 
         if (_frames.Length > 1) _anim.Start();
     }
@@ -63,8 +65,11 @@ public sealed class TrayRenderer : IStatusRenderer
 
     public void Dispose()
     {
+        if (_disposed) return;
+        _disposed = true;
         _anim.Stop(); _anim.Dispose();
         _icon.Visible = false; _icon.Dispose();
+        _menu.Dispose();
         DisposeFrames();
     }
 }
