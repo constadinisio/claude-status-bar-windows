@@ -6,9 +6,8 @@ namespace ClaudeStatusBar;
 
 internal static class Program
 {
-    // Placeholder — replace with real GitHub repo URL when published
     private const string UpdateUrl =
-        "https://github.com/REPLACE_ME_OWNER/claude-status-bar-windows";
+        "https://github.com/constadinisio/claude-status-bar-windows";
 
     [STAThread]
     private static void Main()
