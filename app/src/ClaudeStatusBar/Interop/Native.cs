@@ -2,14 +2,14 @@ using System.Runtime.InteropServices;
 
 namespace ClaudeStatusBar.Interop;
 
-public static class Native
+[StructLayout(LayoutKind.Sequential)]
+public struct RECT { public int left, top, right, bottom; }
+
+internal static class Native
 {
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     internal static extern bool DestroyIcon(IntPtr hIcon);
-
-    [StructLayout(LayoutKind.Sequential)]
-    public struct RECT { public int left, top, right, bottom; }
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
     internal static extern IntPtr FindWindow(string? lpClassName, string? lpWindowName);
