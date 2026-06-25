@@ -32,4 +32,41 @@ internal static class Native
     [DllImport("user32.dll", SetLastError = true)]
     internal static extern int MapWindowPoints(IntPtr hWndFrom, IntPtr hWndTo,
                                                ref RECT lpPoints, uint cPoints);
+
+    // ── Embedding constants ──────────────────────────────────────────────────
+    internal const int GWL_STYLE   = -16;
+    internal const int GWL_EXSTYLE = -20;
+
+    internal const int WS_CHILD       = 0x40000000;
+    internal const int WS_POPUP       = unchecked((int)0x80000000);
+    internal const int WS_VISIBLE     = 0x10000000;
+    internal const int WS_CLIPSIBLINGS = 0x04000000;
+
+    internal const int WS_EX_LAYERED    = 0x00080000;
+    internal const int WS_EX_TOOLWINDOW = 0x00000080;
+    internal const int WS_EX_NOACTIVATE = 0x08000000;
+
+    internal const uint SWP_NOACTIVATE  = 0x0010;
+    internal const uint SWP_SHOWWINDOW  = 0x0040;
+    internal const uint SWP_NOZORDER    = 0x0004;
+
+    internal static readonly IntPtr HWND_TOP = IntPtr.Zero;
+
+    // ── Embedding P/Invokes ──────────────────────────────────────────────────
+    [DllImport("user32.dll", SetLastError = true)]
+    internal static extern IntPtr SetParent(IntPtr child, IntPtr newParent);
+
+    [DllImport("user32.dll", EntryPoint = "GetWindowLongPtrW", SetLastError = true)]
+    internal static extern IntPtr GetWindowLongPtr(IntPtr hWnd, int nIndex);
+
+    [DllImport("user32.dll", EntryPoint = "SetWindowLongPtrW", SetLastError = true)]
+    internal static extern IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    internal static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter,
+        int x, int y, int cx, int cy, uint uFlags);
+
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    internal static extern uint RegisterWindowMessage(string lpString);
 }
