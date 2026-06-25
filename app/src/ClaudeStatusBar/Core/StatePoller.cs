@@ -22,8 +22,11 @@ public sealed class StatePoller : IDisposable
         _marshal = marshal ?? (a => a());
     }
 
-    public void Start() =>
+    public void Start()
+    {
+        if (_timer is not null) return;
         _timer = new System.Threading.Timer(_ => Tick(), null, 0, _periodMs);
+    }
 
     private void Tick()
     {
@@ -32,8 +35,8 @@ public sealed class StatePoller : IDisposable
         {
             var state = _reader.TryRead();
             if (state is null || state.Ts == _lastTs) return;
-            _lastTs = state.Ts;
             _marshal(() => _onChanged(state));
+            _lastTs = state.Ts;   // advance only after successful delivery
         }
         finally { Interlocked.Exchange(ref _busy, 0); }
     }
