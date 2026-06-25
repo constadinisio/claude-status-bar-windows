@@ -1,0 +1,5 @@
+{
+  "name": "claude-status-bar-windows",
+  "owner": "REPLACE_ME_OWNER",
+  "plugins": [ { "name": "claude-status-bar-windows", "source": "./", "version": "0.1.0" } ]
+}

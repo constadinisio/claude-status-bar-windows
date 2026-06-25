@@ -1,0 +1,7 @@
+{
+  "name": "claude-status-bar-windows",
+  "description": "Windows taskbar status indicator for Claude Code",
+  "version": "0.1.0",
+  "homepage": "https://github.com/REPLACE_ME_OWNER/claude-status-bar-windows",
+  "license": "MIT"
+}
