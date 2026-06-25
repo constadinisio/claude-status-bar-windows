@@ -5,13 +5,14 @@ public static class RendererSelector
 {
     public static IStatusRenderer Create()
     {
+        EmbeddedRenderer? embedded = null;
         try
         {
-            var embedded = new EmbeddedRenderer();
+            embedded = new EmbeddedRenderer();
             if (embedded.Embed()) return embedded;
-            embedded.Dispose();
         }
         catch { /* fall through to tray */ }
+        embedded?.Dispose();
         return new TrayRenderer();
     }
 }
