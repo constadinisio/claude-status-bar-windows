@@ -15,22 +15,31 @@ public static class IconFactory
         finally { Native.DestroyIcon(h); }
     }
 
-    private static Bitmap NewCanvas(int size, out Graphics g)
+    // Owns both the Bitmap and its Graphics so neither leaks if GDI+ setup throws.
+    private readonly record struct Canvas(Bitmap Bmp, Graphics G) : IDisposable
+    {
+        public void Dispose() { G.Dispose(); Bmp.Dispose(); }
+    }
+
+    private static Canvas NewCanvas(int size)
     {
         var bmp = new Bitmap(size, size);
-        g = Graphics.FromImage(bmp);
-        g.SmoothingMode = SmoothingMode.AntiAlias;
-        g.Clear(Color.Transparent);
-        return bmp;
+        try
+        {
+            var g = Graphics.FromImage(bmp);
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.Clear(Color.Transparent);
+            return new Canvas(bmp, g);
+        }
+        catch { bmp.Dispose(); throw; }
     }
 
     public static Icon Dot(int sizePx, Color color)
     {
-        using var bmp = NewCanvas(sizePx, out var g);
-        using (g)
+        using var c = NewCanvas(sizePx);
         using (var brush = new SolidBrush(color))
-            g.FillEllipse(brush, 2, 2, sizePx - 4, sizePx - 4);
-        return FromBitmap(bmp);
+            c.G.FillEllipse(brush, 2, 2, sizePx - 4, sizePx - 4);
+        return FromBitmap(c.Bmp);
     }
 
     // Placeholder animation: a dot that "pulses" across N frames.
@@ -52,14 +61,11 @@ public static class IconFactory
         var result = new Icon[frames];
         for (int i = 0; i < frames; i++)
         {
-            using var bmp = NewCanvas(sizePx, out var g);
-            using (g)
-            {
-                int inset = 2 + i;                       // simple pulse animation
-                using var brush = new SolidBrush(baseColor);
-                g.FillEllipse(brush, inset, inset, sizePx - inset * 2, sizePx - inset * 2);
-            }
-            result[i] = FromBitmap(bmp);
+            using var c = NewCanvas(sizePx);
+            int inset = 2 + i;                       // simple pulse animation
+            using (var brush = new SolidBrush(baseColor))
+                c.G.FillEllipse(brush, inset, inset, sizePx - inset * 2, sizePx - inset * 2);
+            result[i] = FromBitmap(c.Bmp);
         }
         return result;
     }
