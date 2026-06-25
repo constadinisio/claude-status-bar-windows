@@ -1,4 +1,5 @@
 using System.Windows.Forms;
+using ClaudeStatusBar.App;
 using ClaudeStatusBar.Core;
 
 namespace ClaudeStatusBar.Render;
@@ -17,6 +18,21 @@ public sealed class TrayRenderer : IStatusRenderer
     public TrayRenderer()
     {
         _menu = new ContextMenuStrip();
+
+        var autoStartItem = new ToolStripMenuItem("Iniciar con Windows")
+        {
+            Checked = AutoStart.IsEnabled,
+        };
+        autoStartItem.Click += (_, _) =>
+        {
+            if (AutoStart.IsEnabled)
+                AutoStart.Disable();
+            else
+                AutoStart.Enable();
+            autoStartItem.Checked = AutoStart.IsEnabled;
+        };
+        _menu.Items.Add(autoStartItem);
+
         _menu.Items.Add("Salir", null, (_, _) => ExitRequested?.Invoke(this, EventArgs.Empty));
 
         _icon = new NotifyIcon
