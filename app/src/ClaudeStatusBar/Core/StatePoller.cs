@@ -10,7 +10,7 @@ public sealed class StatePoller : IDisposable
     private readonly int _periodMs;
     private readonly Action<Action> _marshal;
     private System.Threading.Timer? _timer;
-    private long _lastTs = long.MinValue;
+    private AppState? _last;
     private int _busy;   // evita reentrancia si un tick se solapa
 
     public StatePoller(StateReader reader, Action<AppState> onChanged,
@@ -34,9 +34,9 @@ public sealed class StatePoller : IDisposable
         try
         {
             var state = _reader.TryRead();
-            if (state is null || state.Ts == _lastTs) return;
+            if (state is null || state.Equals(_last)) return;
             _marshal(() => _onChanged(state));
-            _lastTs = state.Ts;   // advance only after successful delivery
+            _last = state;   // advance only after successful delivery
         }
         finally { Interlocked.Exchange(ref _busy, 0); }
     }

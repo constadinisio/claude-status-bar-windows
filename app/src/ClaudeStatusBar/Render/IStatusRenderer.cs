@@ -6,4 +6,5 @@ public interface IStatusRenderer : IDisposable
 {
     void Render(AppState state);
     event EventHandler? ExitRequested;
+    event EventHandler? EmbedLost;
 }

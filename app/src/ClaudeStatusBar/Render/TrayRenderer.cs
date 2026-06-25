@@ -14,6 +14,9 @@ public sealed class TrayRenderer : IStatusRenderer
     private bool _disposed;
 
     public event EventHandler? ExitRequested;
+#pragma warning disable CS0067
+    public event EventHandler? EmbedLost;
+#pragma warning restore CS0067
 
     public TrayRenderer()
     {

@@ -7,7 +7,7 @@ public class StatePollerTests : IDisposable
         "csb_poll_" + Guid.NewGuid().ToString("N") + ".json");
 
     [Fact]
-    public async Task Fires_only_on_ts_change()
+    public async Task Fires_only_on_content_change()
     {
         File.WriteAllText(_path, """{"state":"idle","ts":1}""");
         var seen = new List<AppState>();
@@ -15,10 +15,10 @@ public class StatePollerTests : IDisposable
             s => { lock (seen) seen.Add(s); }, periodMs: 30, marshal: a => a());
         poller.Start();
 
-        await Task.Delay(120);                       // varios ticks, mismo ts -> 1 evento
+        await Task.Delay(120);                       // varios ticks, mismo contenido -> 1 evento
         File.WriteAllText(_path + ".tmp", """{"state":"done","ts":2}""");
         File.Move(_path + ".tmp", _path, overwrite: true);
-        await Task.Delay(120);                        // nuevo ts -> 2do evento
+        await Task.Delay(120);                        // contenido distinto -> 2do evento
 
         lock (seen)
         {

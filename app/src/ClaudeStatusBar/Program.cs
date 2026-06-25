@@ -17,7 +17,7 @@ internal static class Program
         Velopack.VelopackApp.Build().Run();
 
         using var mutex = new Mutex(true,
-            @"Global\ClaudeStatusBar-9F4C2A77-2C5E-4E2A-9E3A-CSB", out bool createdNew);
+            @"Local\ClaudeStatusBar-9F4C2A77-2C5E-4E2A-9E3A-CSB", out bool createdNew);
         if (!createdNew) return;
 
         // Fire-and-forget non-fatal update check; only the singleton instance polls
