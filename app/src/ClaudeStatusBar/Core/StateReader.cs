@@ -32,6 +32,7 @@ public sealed class StateReader
                     dto.startedAt, dto.ts);
             }
             catch (IOException) when (attempt < 2) { Thread.Sleep(20); }
+            catch (IOException) { return null; }   // final attempt exhausted
             catch (JsonException) { return null; }
         }
         return null;

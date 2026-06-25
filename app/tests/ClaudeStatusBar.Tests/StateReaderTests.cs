@@ -42,5 +42,15 @@ public class StateReaderTests : IDisposable
         Assert.Equal(StatusKind.Done, r.TryRead()!.State);
     }
 
+    [Fact]
+    public void TryRead_returns_null_when_file_locked_exclusively()
+    {
+        File.WriteAllText(_path, """{"state":"idle","ts":1}""");
+        // Hold an exclusive lock so the reader's open fails on every attempt.
+        using var locker = new FileStream(_path, FileMode.Open, FileAccess.Read, FileShare.None);
+        // Must return null after exhausting retries, never throw.
+        Assert.Null(new StateReader(_path).TryRead());
+    }
+
     public void Dispose() { if (File.Exists(_path)) File.Delete(_path); }
 }
