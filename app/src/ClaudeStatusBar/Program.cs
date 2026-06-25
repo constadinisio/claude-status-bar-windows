@@ -16,12 +16,12 @@ internal static class Program
         // MUST be the very first statement — handles Velopack install/uninstall hooks
         Velopack.VelopackApp.Build().Run();
 
-        // Fire-and-forget non-fatal update check; never blocks or crashes startup
-        _ = CheckForUpdatesAsync();
-
         using var mutex = new Mutex(true,
             @"Global\ClaudeStatusBar-9F4C2A77-2C5E-4E2A-9E3A-CSB", out bool createdNew);
         if (!createdNew) return;
+
+        // Fire-and-forget non-fatal update check; only the singleton instance polls
+        _ = CheckForUpdatesAsync();
 
         ApplicationConfiguration.Initialize();
         Application.Run(new TrayApplicationContext(RendererSelector.Create));
@@ -38,7 +38,7 @@ internal static class Program
             if (info != null)
                 await mgr.DownloadUpdatesAsync(info).ConfigureAwait(false);
         }
-        catch
+        catch (Exception)
         {
             // Non-fatal: placeholder URL, no network, or not installed via Velopack — ignored
         }
