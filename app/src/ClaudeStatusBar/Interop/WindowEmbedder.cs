@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 namespace ClaudeStatusBar.Interop;
 
 /// <summary>
@@ -20,6 +22,8 @@ public sealed class WindowEmbedder : IDisposable
     /// </summary>
     public bool TryEmbed(IntPtr child, int widthPx)
     {
+        if (child == IntPtr.Zero) return false;
+
         _child   = child;
         _widthPx = widthPx;
         _taskbar = TaskbarLocator.FindPrimaryTaskbar();
@@ -30,12 +34,18 @@ public sealed class WindowEmbedder : IDisposable
         // Styles must be updated before SetParent so the child is accepted as a child window.
         var style = (long)Native.GetWindowLongPtr(child, Native.GWL_STYLE);
         style = (style & ~(long)Native.WS_POPUP) | Native.WS_CHILD | Native.WS_CLIPSIBLINGS | Native.WS_VISIBLE;
+        // SetWindowLongPtr returns the PREVIOUS value (0 is ambiguous: prior-was-0 vs error),
+        // so clear the last error first, then read it to detect a genuine failure.
+        Marshal.SetLastSystemError(0);
         Native.SetWindowLongPtr(child, Native.GWL_STYLE, (IntPtr)style);
+        if (Marshal.GetLastWin32Error() != 0) return false;
 
         // Set extended style: add WS_EX_LAYERED | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW.
         var ex = (long)Native.GetWindowLongPtr(child, Native.GWL_EXSTYLE);
         ex |= Native.WS_EX_LAYERED | Native.WS_EX_NOACTIVATE | Native.WS_EX_TOOLWINDOW;
+        Marshal.SetLastSystemError(0);
         Native.SetWindowLongPtr(child, Native.GWL_EXSTYLE, (IntPtr)ex);
+        if (Marshal.GetLastWin32Error() != 0) return false;
 
         // Reparent into the taskbar.
         if (Native.SetParent(child, _taskbar) == IntPtr.Zero) return false;
