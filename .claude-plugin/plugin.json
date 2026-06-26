@@ -1,7 +1,7 @@
 {
   "name": "claude-status-bar-windows",
   "description": "Windows taskbar status indicator for Claude Code",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "homepage": "https://github.com/constadinisio/claude-status-bar-windows",
   "license": "MIT"
 }
