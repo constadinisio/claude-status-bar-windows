@@ -35,7 +35,13 @@ internal static class Program
                 new Velopack.Sources.GithubSource(UpdateUrl, null, false));
             var info = await mgr.CheckForUpdatesAsync().ConfigureAwait(false);
             if (info != null)
+            {
                 await mgr.DownloadUpdatesAsync(info).ConfigureAwait(false);
+                // Apply when the app next exits (it self-quits when no session is
+                // active), without restarting now — the next SessionStart launches
+                // the updated version. Avoids yanking the widget mid-session.
+                mgr.WaitExitThenApplyUpdates(info, silent: true, restart: false);
+            }
         }
         catch (Exception)
         {
