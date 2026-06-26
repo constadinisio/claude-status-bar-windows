@@ -21,7 +21,7 @@ if ($LASTEXITCODE -ne 0) { Write-Error "publish.ps1 failed (exit $LASTEXITCODE)"
 Write-Host "Running vpk pack..."
 vpk pack `
     --packId      ClaudeStatusBar `
-    --packVersion 0.1.0 `
+    --packVersion 0.1.1 `
     --packDir     "$root\build\publish" `
     --mainExe     ClaudeStatusBar.exe `
     --outputDir   "$root\build\Releases"
