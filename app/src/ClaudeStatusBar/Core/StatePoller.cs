@@ -9,17 +9,23 @@ public sealed class StatePoller : IDisposable
     private readonly Action<AppState> _onChanged;
     private readonly int _periodMs;
     private readonly Action<Action> _marshal;
+    private readonly Func<AppState, AppState> _resolve;
     private System.Threading.Timer? _timer;
     private AppState? _last;
     private int _busy;   // evita reentrancia si un tick se solapa
 
     public StatePoller(StateReader reader, Action<AppState> onChanged,
-                       int periodMs = 400, Action<Action>? marshal = null)
+                       int periodMs = 400, Action<Action>? marshal = null,
+                       Func<AppState, AppState>? resolve = null)
     {
         _reader = reader;
         _onChanged = onChanged;
         _periodMs = periodMs;
         _marshal = marshal ?? (a => a());
+        // Maps the raw state to what should be shown (e.g. recover from an Esc
+        // interrupt that froze state.json). Applied before the change check so a
+        // thinking→idle recovery is delivered even though the file didn't change.
+        _resolve = resolve ?? (s => s);
     }
 
     public void Start()
@@ -34,7 +40,9 @@ public sealed class StatePoller : IDisposable
         try
         {
             var state = _reader.TryRead();
-            if (state is null || state.Equals(_last)) return;
+            if (state is null) return;
+            state = _resolve(state);
+            if (state.Equals(_last)) return;
             _marshal(() => _onChanged(state));
             _last = state;   // advance only after successful delivery
         }

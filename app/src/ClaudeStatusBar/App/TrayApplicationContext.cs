@@ -39,7 +39,9 @@ public sealed class TrayApplicationContext : ApplicationContext
                 _chime.OnState(state, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
             },
             periodMs: 400,
-            marshal: action => _ui.Post(_ => action(), null));
+            marshal: action => _ui.Post(_ => action(), null),
+            resolve: raw => EffectiveState.Resolve(
+                raw, DateTimeOffset.UtcNow.ToUnixTimeSeconds(), TranscriptTail.LastLine));
         _poller.Start();
 
         // Estado inicial inmediato.
