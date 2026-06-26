@@ -23,6 +23,7 @@ public partial class Widget : Window
     private BitmapSource[] _frames = System.Array.Empty<BitmapSource>();
     private int _frameIdx;
     private StatusKind? _currentKind;
+    private AppState _lastState = AppState.Idle;
 
     public Widget()
     {
@@ -36,6 +37,9 @@ public partial class Widget : Window
             if (_frames.Length == 0) return;
             _frameIdx = (_frameIdx + 1) % _frames.Length;
             FrameImage.Source = _frames[_frameIdx];
+            // Keep the elapsed clock ticking live between hook events (the poller
+            // only delivers on state changes, so Update() alone would freeze it).
+            ElapsedText.Text = StatusViewModel.Elapsed(_lastState, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
         };
         // Stop the timer when the window closes (e.g. EmbedLost → swap to tray),
         // so it can't tick against a disposed widget.
@@ -51,6 +55,7 @@ public partial class Widget : Window
 
     public void Update(AppState s)
     {
+        _lastState = s;
         LabelText.Text = StatusViewModel.ShortLabel(s);
         ElapsedText.Text = StatusViewModel.Elapsed(s, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
 
