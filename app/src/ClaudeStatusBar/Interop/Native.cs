@@ -69,4 +69,11 @@ internal static class Native
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)]
     internal static extern uint RegisterWindowMessage(string lpString);
+
+    // ── Audio (MCI) ──────────────────────────────────────────────────────────
+    // Plays MP3 via the Media Control Interface — no WPF dispatcher dependency,
+    // unlike MediaPlayer, which matters in this mixed WinForms/WPF app.
+    [DllImport("winmm.dll", CharSet = CharSet.Unicode)]
+    internal static extern int mciSendString(string command,
+        System.Text.StringBuilder? returnValue, int returnLength, IntPtr callback);
 }

@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using ClaudeStatusBar.App;
 using ClaudeStatusBar.Core;
 
 namespace ClaudeStatusBar.Render;
@@ -39,6 +40,11 @@ public partial class Widget : Window
         // Stop the timer when the window closes (e.g. EmbedLost → swap to tray),
         // so it can't tick against a disposed widget.
         Closed += (_, _) => _anim.Stop();
+
+        // Right-click toggle for the completion sound (the embedded widget's only menu).
+        SoundMenuItem.Click += (_, _) => SoundSetting.Set(!SoundSetting.IsEnabled);
+        if (SoundMenuItem.Parent is System.Windows.Controls.ContextMenu cm)
+            cm.Opened += (_, _) => SoundMenuItem.IsChecked = SoundSetting.IsEnabled;
     }
 
     public IntPtr Handle => new WindowInteropHelper(this).EnsureHandle();

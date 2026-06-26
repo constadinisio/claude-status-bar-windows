@@ -21,6 +21,7 @@ Este es un port a Windows del concepto macOS [claude-status-bar](https://github.
 - **Incrustado en la barra** — vive dentro de la barra de tareas de Windows 11, no es una ventana flotante.
 - **Fallback elegante** — cae a un ícono de bandeja clásico si la incrustación falla (Windows más viejo, reemplazos del shell, reinicios de Explorer).
 - **Autogestionado** — arranca cuando empieza una sesión de Claude y se cierra solo cuando terminan todas.
+- **Sonido de completación** — sonido opcional cuando termina un turno de más de ~1 minuto (apagado por defecto; se activa desde el menú).
 - **Auto-actualización** — incluye [Velopack](https://velopack.io); las actualizaciones se instalan en silencio en segundo plano.
 - **Iniciar con Windows** — toggle opcional de autostart.
 
@@ -92,12 +93,13 @@ Una vez instalado, el widget corre automáticamente:
 - **Arranca** cuando empieza una sesión de Claude Code y **se cierra solo** cuando terminan todas — no hace falta gestionarlo a mano.
 - El ícono y la etiqueta se actualizan en vivo a medida que Claude trabaja.
 
-**Menú de bandeja (solo en modo fallback):** cuando corre como ícono de bandeja, hacé clic derecho para:
+**Menú de bandeja (modo fallback):** cuando corre como ícono de bandeja, hacé clic derecho para:
 
 - **Iniciar con Windows** — alterna el inicio al loguearte (escribe en la clave de registro `HKCU\…\Run`).
+- **Play Completion Sound** — alterna el sonido de completación (turnos ≥1 min).
 - **Salir** — cierra la app.
 
-> En modo incrustado (barra de tareas) el widget es deliberadamente sin menú ni cromo — depende del comportamiento de autocierre, así que no hay botón de salir manual. Para tener el menú, la app debe estar en modo fallback de bandeja.
+**Widget incrustado:** hacé clic derecho sobre el widget en la barra de tareas para un menú chico con **Play Completion Sound**. No tiene botón de salir a propósito — la app se autocierra cuando no hay sesión de Claude activa. El menú completo (autostart, salir) vive en el ícono de bandeja en modo fallback.
 
 ## Estados
 

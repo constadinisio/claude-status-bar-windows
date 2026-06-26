@@ -21,6 +21,7 @@ This is a Windows port of the macOS [claude-status-bar](https://github.com/m1ckc
 - **Taskbar-embedded** — sits inside the Windows 11 taskbar, not a floating window.
 - **Graceful fallback** — drops to a classic tray icon if the taskbar embed fails (older Windows, shell replacements, Explorer restarts).
 - **Self-managing** — launches when a Claude session starts and quits itself when all sessions end.
+- **Completion chime** — optional sound when a turn longer than ~1 minute finishes (off by default; toggle from the menu).
 - **Auto-update** — ships with [Velopack](https://velopack.io); updates install silently in the background.
 - **Start with Windows** — optional autostart toggle.
 
@@ -92,12 +93,13 @@ Once installed, the widget runs automatically:
 - It **launches** when a Claude Code session starts and **quits itself** when all sessions end — no manual management needed.
 - The icon and label update live as Claude works.
 
-**Tray menu (fallback mode only):** when running as a tray icon, right-click it for:
+**Tray menu (fallback mode):** when running as a tray icon, right-click it for:
 
 - **Iniciar con Windows** — toggle launching at login (writes to the `HKCU\…\Run` registry key).
+- **Play Completion Sound** — toggle the completion chime (≥1 min turns).
 - **Salir** — quit the app.
 
-> In embedded (taskbar) mode the widget is intentionally menu-less and chrome-free — it relies on the self-quit behavior, so there's no manual quit button. To get the menu, the app must be in tray-fallback mode.
+**Embedded widget:** right-click the widget in the taskbar for a small menu with **Play Completion Sound**. It has no quit button by design — the app self-quits when no Claude session is active. The full menu (autostart, quit) lives on the tray icon in fallback mode.
 
 ## States
 

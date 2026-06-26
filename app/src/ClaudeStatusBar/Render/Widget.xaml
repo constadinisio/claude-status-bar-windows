@@ -5,6 +5,11 @@
         ShowInTaskbar="False" ResizeMode="NoResize" Topmost="False"
         Width="200" Height="40">
   <Border Background="#00000000" Padding="6,2" VerticalAlignment="Stretch">
+    <Border.ContextMenu>
+      <ContextMenu>
+        <MenuItem x:Name="SoundMenuItem" Header="Play Completion Sound" IsCheckable="True"/>
+      </ContextMenu>
+    </Border.ContextMenu>
     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
       <Image x:Name="FrameImage" Width="30" Height="30" Margin="0,0,6,0"
              VerticalAlignment="Center" SnapsToDevicePixels="True"

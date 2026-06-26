@@ -2,6 +2,7 @@ using System.IO;
 using System.Windows.Forms;
 using ClaudeStatusBar.Core;
 using ClaudeStatusBar.Render;
+using ClaudeStatusBar.Sound;
 
 namespace ClaudeStatusBar.App;
 
@@ -11,6 +12,8 @@ public sealed class TrayApplicationContext : ApplicationContext
     private readonly StatePoller _poller;
     private readonly SynchronizationContext _ui;
     private readonly System.Threading.Timer _sessionTimer;
+    private readonly CompletionSound _sound;
+    private readonly CompletionChime _chime;
     private AppState _lastState = AppState.Idle;
     private volatile bool _seenSession;
     private volatile bool _exitPosted;
@@ -24,12 +27,16 @@ public sealed class TrayApplicationContext : ApplicationContext
         _ui = SynchronizationContext.Current
               ?? throw new InvalidOperationException("No UI sync context");
 
+        _sound = new CompletionSound();
+        _chime = new CompletionChime(_sound, () => SoundSetting.IsEnabled);
+
         _poller = new StatePoller(
             new StateReader(StatusBarPaths.StateFile),
             state =>
             {
                 _lastState = state;
                 _renderer.Render(state);
+                _chime.OnState(state, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
             },
             periodMs: 400,
             marshal: action => _ui.Post(_ => action(), null));
@@ -86,6 +93,7 @@ public sealed class TrayApplicationContext : ApplicationContext
             _sessionTimer.Dispose();
             _poller.Dispose();
             _renderer.Dispose();
+            _sound.Dispose();
         }
         base.Dispose(disposing);
     }

@@ -36,6 +36,18 @@ public sealed class TrayRenderer : IStatusRenderer
         };
         _menu.Items.Add(autoStartItem);
 
+        var soundItem = new ToolStripMenuItem("Play Completion Sound")
+        {
+            Checked = SoundSetting.IsEnabled,
+            ToolTipText = "Chime when a turn longer than ~1 min finishes",
+        };
+        soundItem.Click += (_, _) =>
+        {
+            SoundSetting.Set(!SoundSetting.IsEnabled);
+            soundItem.Checked = SoundSetting.IsEnabled;
+        };
+        _menu.Items.Add(soundItem);
+
         _menu.Items.Add("Salir", null, (_, _) => ExitRequested?.Invoke(this, EventArgs.Empty));
 
         _icon = new NotifyIcon
