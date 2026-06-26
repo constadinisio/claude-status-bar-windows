@@ -1,5 +1,5 @@
 {
   "name": "claude-status-bar-windows",
   "owner": "constadinisio",
-  "plugins": [ { "name": "claude-status-bar-windows", "source": "./", "version": "0.1.3" } ]
+  "plugins": [ { "name": "claude-status-bar-windows", "source": "./", "version": "0.1.4" } ]
 }
