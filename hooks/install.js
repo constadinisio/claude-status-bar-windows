@@ -16,12 +16,15 @@ const sbDir         = path.join(home, ".claude", "statusbar");
 const MARKER        = sbDir; // every hook arg we add points inside this dir
 const updateDest    = path.join(sbDir, "update.js");
 const lifecycleDest = path.join(sbDir, "lifecycle.js");
+const launchDest    = path.join(sbDir, "launch.js");
 const settingsPath  = path.join(home, ".claude", "settings.json");
 const node          = process.execPath;
 
 fs.mkdirSync(sbDir, { recursive: true });
 fs.copyFileSync(path.join(__dirname, "update.js"),    updateDest);
 fs.copyFileSync(path.join(__dirname, "lifecycle.js"), lifecycleDest);
+// launch.js is a shared dependency required by both scripts above; copy it too.
+fs.copyFileSync(path.join(__dirname, "launch.js"),    launchDest);
 
 // Exec form: { type:"command", command:<node>, args:[<script>, <event>] }
 // This survives paths with spaces on Windows (no shell quoting needed).

@@ -9,11 +9,10 @@
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
-const cp = require("child_process");
 
-const EXE_NAME = "ClaudeStatusBar.exe";
-// Stable install path — does NOT use CLAUDE_PLUGIN_ROOT (changes between updates).
-const EXE_PATH = path.join(process.env.LOCALAPPDATA || os.homedir(), "ClaudeStatusBar", EXE_NAME);
+// running()/launch() live in launch.js so update.js can revive a widget that died
+// mid-session (e.g. after an auto-update applied on exit), not just on SessionStart.
+const { running, launch } = require("./launch.js");
 
 const dir = path.join(os.homedir(), ".claude", "statusbar");
 const sessDir = path.join(dir, "sessions.d");
@@ -21,18 +20,6 @@ const statePath = path.join(dir, "state.json");
 const event = process.argv[2];
 
 fs.mkdirSync(sessDir, { recursive: true });
-
-function running() {
-  try {
-    const out = cp.execSync(`tasklist /FI "IMAGENAME eq ${EXE_NAME}" /NH`, { encoding: "utf8" });
-    return out.toLowerCase().includes(EXE_NAME.toLowerCase());
-  } catch { return false; }
-}
-
-function launch() {
-  if (running() || !fs.existsSync(EXE_PATH)) return;
-  cp.spawn(EXE_PATH, [], { stdio: "ignore", detached: true, windowsHide: false }).unref();
-}
 
 const safeId = (s) => String(s || "").replace(/[^A-Za-z0-9_.-]/g, "").slice(0, 64) || "unknown";
 

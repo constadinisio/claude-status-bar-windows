@@ -53,6 +53,11 @@ process.stdin.on("end", () => {
 
   switch (event) {
     case "prompt":
+      // Revive the widget if it died mid-session (e.g. an auto-update that applied
+      // on exit with restart:false leaves the live session with no widget until the
+      // next SessionStart). Idempotent and only once per turn, so there's no
+      // per-tool tasklist cost. Guarded so a missing launch.js never breaks status.
+      try { require("./launch.js").launch(); } catch {}
       state = "thinking"; label = "Thinking…"; startedAt = ts; break;
     case "pre": {
       const t = p.tool_name || "";
