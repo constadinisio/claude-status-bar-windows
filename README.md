@@ -136,6 +136,10 @@ Once installed, the widget runs automatically:
 
 Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for build, test, and hook-development instructions.
 
+## Trademarks
+
+This is an unofficial, open-source project. **It is not affiliated with, endorsed by, or sponsored by Anthropic.** "Claude", the Claude spark logo, and the Clawd crab character are trademarks of Anthropic, used here nominatively. This project is MIT licensed, but that covers the source code only and conveys no rights to Anthropic's trademarks or brand. The icon art is ported from the upstream [m1ckc3s/claude-status-bar](https://github.com/m1ckc3s/claude-status-bar) project.
+
 ## License
 
 [MIT](LICENSE) © 2026 Constantino Di Nisio

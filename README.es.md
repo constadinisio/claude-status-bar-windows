@@ -136,6 +136,10 @@ Una vez instalado, el widget corre automáticamente:
 
 Las contribuciones son bienvenidas — ver [CONTRIBUTING.md](CONTRIBUTING.md) para instrucciones de build, tests y desarrollo de hooks.
 
+## Marcas registradas
+
+Este es un proyecto no oficial y de código abierto. **No está afiliado, avalado ni patrocinado por Anthropic.** "Claude", el logo spark de Claude y el personaje Clawd (el cangrejo) son marcas registradas de Anthropic, usadas aquí de forma nominativa. Este proyecto tiene licencia MIT, pero eso cubre solo el código fuente y no otorga ningún derecho sobre las marcas o la identidad de Anthropic. El arte de los íconos está portado del proyecto original [m1ckc3s/claude-status-bar](https://github.com/m1ckc3s/claude-status-bar).
+
 ## Licencia
 
 [MIT](LICENSE) © 2026 Constantino Di Nisio

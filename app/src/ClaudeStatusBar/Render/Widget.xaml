@@ -6,7 +6,9 @@
         Width="200" Height="40">
   <Border Background="#00000000" Padding="6,2" VerticalAlignment="Stretch">
     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-      <Ellipse x:Name="Dot" Width="10" Height="10" Margin="0,0,6,0" Fill="#D97757"/>
+      <Image x:Name="FrameImage" Width="30" Height="30" Margin="0,0,6,0"
+             VerticalAlignment="Center" SnapsToDevicePixels="True"
+             RenderOptions.BitmapScalingMode="NearestNeighbor"/>
       <TextBlock x:Name="LabelText" Foreground="White" FontSize="12"
                  VerticalAlignment="Center" Text=""/>
       <TextBlock x:Name="ElapsedText" Foreground="#AAFFFFFF" FontSize="11"
