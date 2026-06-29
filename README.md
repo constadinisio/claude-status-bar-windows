@@ -8,8 +8,7 @@
 
 🇪🇸 **[Leé esta documentación en español →](README.es.md)**
 
-<!-- Replace this note with a real screenshot once captured (see docs/assets/.gitkeep). -->
-> 📸 _Screenshot coming soon — the widget lives inside the taskbar, next to the clock._
+> 🎥 **[Watch a short demo →](docs/assets/demo.mp4)** — the widget lives inside the taskbar, next to the clock, reflecting Claude Code's status in real time.
 
 This is a Windows port of the macOS [claude-status-bar](https://github.com/m1ckc3s/claude-status-bar) concept. Instead of a menu-bar item, it embeds a small widget directly into the Windows 11 taskbar (`Shell_TrayWnd`), with automatic fallback to a notification-area (tray) icon when embedding isn't possible.
 
